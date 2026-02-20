@@ -39,11 +39,10 @@ export default function CollectionClient({
                         Aucun produit dans cette catégorie pour le moment.
                     </p>
                 ) : (
-                    <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 justify-center">
                         {products.map((product, index) => (
                             <motion.div
                                 key={product.id}
-                                className="w-[calc(50%-8px)] sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
