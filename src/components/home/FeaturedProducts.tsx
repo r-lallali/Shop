@@ -34,7 +34,7 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
                 transition={{ duration: 0.6 }}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 sm:px-8 mb-8">
+                <div className="flex items-center justify-between mb-8" style={{ paddingLeft: 24, paddingRight: 24 }}>
                     <h2 className="heading-md">Collection</h2>
                     <div className="flex items-center gap-4">
                         <span className="text-xs tracking-wider text-muted">
@@ -62,7 +62,8 @@ export default function FeaturedProducts({ products }: { products: Product[] }) 
                 {/* Product carousel */}
                 <div
                     ref={scrollRef}
-                    className="flex gap-4 overflow-x-auto no-scrollbar px-4 sm:px-8 scroll-smooth"
+                    className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth"
+                    style={{ paddingLeft: 24, paddingRight: 24, paddingBottom: 24 }}
                 >
                     {products.map((product) => (
                         <div
