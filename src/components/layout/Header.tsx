@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
+
 const navLinks = [
     { href: "/", label: "ACCUEIL" },
     { href: "/collections/all", label: "ALL" },
@@ -38,20 +39,12 @@ export default function Header() {
                 pointerEvents: visible ? "auto" : "none",
             }}
         >
-            <div style={{ padding: "0 50px" }}>
+            {/* Desktop header */}
+            <div className="hidden lg:block" style={{ padding: "0 50px" }}>
                 <div
                     className="flex items-center"
                     style={{ height: 120 }}
                 >
-                    {/* Mobile menu button */}
-                    <button
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        className="lg:hidden p-2 -ml-2"
-                        aria-label="Menu"
-                    >
-                        {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-                    </button>
-
                     {/* Logo - left */}
                     <Link
                         href="/"
@@ -66,7 +59,7 @@ export default function Header() {
                     </Link>
 
                     {/* Desktop nav - centered */}
-                    <nav className="hidden lg:flex items-center flex-1 justify-center" style={{ gap: 32 }}>
+                    <nav className="flex items-center flex-1 justify-center" style={{ gap: 32 }}>
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
@@ -83,13 +76,10 @@ export default function Header() {
                         ))}
                     </nav>
 
-                    {/* Spacer for mobile to push icons right */}
-                    <div className="flex-1 lg:hidden" />
-
                     {/* Icons - right */}
                     <div className="flex items-center" style={{ gap: 16 }}>
                         <button
-                            className="hover:opacity-50 transition-opacity hidden sm:flex items-center justify-center"
+                            className="hover:opacity-50 transition-opacity flex items-center justify-center"
                             aria-label="Rechercher"
                             style={{ padding: 8 }}
                         >
@@ -129,9 +119,81 @@ export default function Header() {
                 </div>
             </div>
 
-            {/* Mobile menu */}
+            {/* Mobile header: hamburger | RALYS | icons */}
+            <div className="lg:hidden" style={{ padding: "0 16px" }}>
+                <div
+                    className="flex items-center justify-between"
+                    style={{ height: 64 }}
+                >
+                    {/* Left — Hamburger */}
+                    <button
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        className="flex items-center justify-center"
+                        aria-label="Menu"
+                        style={{ padding: 8, width: 40 }}
+                    >
+                        {mobileMenuOpen ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
+                    </button>
+
+                    {/* Center — Logo */}
+                    <Link
+                        href="/"
+                        className="absolute left-1/2 -translate-x-1/2 uppercase"
+                        style={{
+                            fontSize: 22,
+                            fontWeight: 400,
+                            letterSpacing: "0.35em",
+                        }}
+                    >
+                        RALYS
+                    </Link>
+
+                    {/* Right — 3 icons */}
+                    <div className="flex items-center" style={{ gap: 8 }}>
+                        <button
+                            className="hover:opacity-50 transition-opacity flex items-center justify-center"
+                            aria-label="Rechercher"
+                            style={{ padding: 6 }}
+                        >
+                            <Search size={20} strokeWidth={1.5} />
+                        </button>
+                        <Link
+                            href={session ? "/account" : "/login"}
+                            className="hover:opacity-50 transition-opacity flex items-center justify-center"
+                            aria-label="Compte"
+                            style={{ padding: 6 }}
+                        >
+                            <User size={20} strokeWidth={1.5} />
+                        </Link>
+                        <button
+                            onClick={openCart}
+                            className="hover:opacity-50 transition-opacity relative flex items-center justify-center"
+                            aria-label="Panier"
+                            style={{ padding: 6 }}
+                        >
+                            <ShoppingBag size={20} strokeWidth={1.5} />
+                            {count > 0 && (
+                                <span
+                                    className="absolute bg-black text-white rounded-full flex items-center justify-center font-medium"
+                                    style={{
+                                        top: 0,
+                                        right: 0,
+                                        width: 16,
+                                        height: 16,
+                                        fontSize: 10,
+                                    }}
+                                >
+                                    {count}
+                                </span>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile menu overlay */}
             {mobileMenuOpen && (
-                <div className="lg:hidden fixed inset-0 bg-white z-50" style={{ top: 120 }}>
+                <div className="lg:hidden fixed inset-0 bg-white z-50" style={{ top: 64 }}>
                     <nav className="flex flex-col items-center py-16 gap-10">
                         {navLinks.map((link) => (
                             <Link

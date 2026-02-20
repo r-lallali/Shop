@@ -40,6 +40,7 @@ body {
   0% {
     transform: translateX(100%);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -53,6 +54,7 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -104,4 +106,37 @@ body {
 
 .product-overlay:hover {
   opacity: 1;
+}
+
+/* Hero section responsive */
+.hero-section {
+  height: 65vh;
+  min-height: 400px;
+}
+
+.hero-content {
+  padding: 0 24px 40px;
+}
+
+.hero-title {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    height: 85vh;
+    min-height: 500px;
+  }
+
+  .hero-content {
+    padding: 0 50px 60px;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+  }
 }
