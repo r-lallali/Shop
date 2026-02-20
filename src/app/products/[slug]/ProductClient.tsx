@@ -37,7 +37,7 @@ export default function ProductClient({
     return (
         <div className="min-h-screen">
             {/* Breadcrumb */}
-            <div className="px-6 md:px-12 py-6 max-w-7xl mx-auto">
+            <div className="py-6 max-w-7xl mx-auto" style={{ padding: "0 24px" }}>
                 <Link
                     href="/collections/all"
                     className="inline-flex items-center gap-1 text-xs tracking-wider text-muted hover:text-foreground transition-colors"
@@ -52,7 +52,8 @@ export default function ProductClient({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="max-w-7xl mx-auto px-6 md:px-12 pb-16"
+                className="max-w-7xl mx-auto pb-16"
+                style={{ padding: "0 24px" }}
             >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
                     {/* Images */}
