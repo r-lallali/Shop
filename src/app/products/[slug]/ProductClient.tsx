@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronDown, Minus, Plus, Shirt, Truck, Ruler } from "lucide-react";
 import type { Product } from "@/lib/data";
@@ -19,6 +20,7 @@ export default function ProductClient({
     const [quantity, setQuantity] = useState(1);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const { addItem, openCart } = useCartStore();
+    const router = useRouter();
 
     const handleAddToCart = () => {
         if (!selectedSize) return;
@@ -38,13 +40,13 @@ export default function ProductClient({
         <div className="min-h-screen">
             {/* Breadcrumb */}
             <div className="py-6 max-w-7xl mx-auto" style={{ padding: "0 24px" }}>
-                <Link
-                    href="/collections/all"
+                <button
+                    onClick={() => router.back()}
                     className="inline-flex items-center gap-1 text-xs tracking-wider text-muted hover:text-foreground transition-colors"
                 >
                     <ChevronLeft size={12} />
                     Retour
-                </Link>
+                </button>
             </div>
 
             {/* Product */}
