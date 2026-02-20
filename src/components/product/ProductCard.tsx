@@ -19,7 +19,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 text-center mt-4">
                 <h3 className="text-xs tracking-[0.1em] uppercase font-light group-hover:opacity-60 transition-opacity">
                     {product.name}
                 </h3>
