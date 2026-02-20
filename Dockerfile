@@ -23,7 +23,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=2999
 ENV HOSTNAME="0.0.0.0"
 
 # Create non-root user
@@ -41,6 +41,6 @@ COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nextjs
 
-EXPOSE 3000
+EXPOSE 2999
 
 CMD ["node", "server.js"]
