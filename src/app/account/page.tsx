@@ -41,17 +41,17 @@ function OrderList() {
     return (
         <div className="space-y-4">
             {orders.map((order) => (
-                <div key={order.id} className="border border-gray-100 rounded-md p-4 hover:border-black transition-colors">
-                    <div className="flex justify-between items-start mb-4">
+                <div key={order.id} className="border border-gray-100 rounded-md p-5 sm:p-6 hover:border-black transition-colors mb-4">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4 mb-5">
                         <div>
-                            <p className="text-xs font-medium tracking-wider uppercase mb-1">
+                            <p className="text-xs sm:text-sm font-medium tracking-wider uppercase mb-1">
                                 Commande #{order.id.slice(-8).toUpperCase()}
                             </p>
                             <p className="text-xs text-gray-500">
                                 {new Date(order.createdAt).toLocaleDateString('fr-FR')}
                             </p>
                         </div>
-                        <div className="text-right">
+                        <div className="sm:text-right">
                             <p className="text-sm font-medium">{order.total.toFixed(2)} €</p>
                             <p className="text-xs text-gray-500 mt-1">{order.items.length} article(s)</p>
                         </div>
@@ -97,78 +97,25 @@ export default function AccountPage() {
 
     return (
         <div className="min-h-screen bg-white text-black">
-            <div style={{ padding: "0 50px" }}>
-                <div style={{ paddingTop: "60px", paddingBottom: "80px" }}>
+            <div className="max-w-[1200px] mx-auto px-6 sm:px-12 py-16 sm:py-20">
 
-                    {/* Title */}
-                    <h1 style={{
-                        fontSize: "42px",
-                        fontWeight: 300,
-                        letterSpacing: "0.02em",
-                        marginBottom: "24px",
-                    }}>
-                        Compte
-                    </h1>
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                    <div>
+                        {/* Title */}
+                        <h1 style={{
+                            fontSize: "42px",
+                            fontWeight: 300,
+                            letterSpacing: "0.02em",
+                            marginBottom: "24px",
+                        }}>
+                            Compte
+                        </h1>
 
-                    {/* User + Logout */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "60px" }}>
-                        <User size={18} strokeWidth={1.5} />
-                        <button
-                            onClick={() => signOut({ callbackUrl: "/" })}
-                            style={{
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
-                                fontSize: "14px",
-                                textDecoration: "underline",
-                                textUnderlineOffset: "4px",
-                                color: "black",
-                                padding: 0,
-                            }}
-                        >
-                            Déconnexion
-                        </button>
-                    </div>
-
-                    {/* Two columns */}
-                    <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "1fr 1fr",
-                        gap: "80px",
-                    }}>
-                        {/* Left — Orders */}
-                        <div>
-                            <h2 style={{
-                                fontSize: "18px",
-                                fontWeight: 600,
-                                letterSpacing: "0.02em",
-                                marginBottom: "20px",
-                            }}>
-                                Historique des commandes
-                            </h2>
-                            <OrderList />
-                        </div>
-
-                        {/* Right — Account Details */}
-                        <div>
-                            <h2 style={{
-                                fontSize: "18px",
-                                fontWeight: 600,
-                                letterSpacing: "0.02em",
-                                marginBottom: "20px",
-                            }}>
-                                Détails du compte
-                            </h2>
-                            <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
-                                {session.user?.name}
-                            </p>
-                            <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
-                                {session.user?.email}
-                            </p>
-                            <p style={{ fontSize: "14px", color: "#374151", marginBottom: "16px" }}>
-                                France
-                            </p>
+                        {/* User + Logout */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <User size={18} strokeWidth={1.5} />
                             <button
+                                onClick={() => signOut({ callbackUrl: "/" })}
                                 style={{
                                     background: "none",
                                     border: "none",
@@ -180,9 +127,60 @@ export default function AccountPage() {
                                     padding: 0,
                                 }}
                             >
-                                Voir les adresses (1)
+                                Déconnexion
                             </button>
                         </div>
+                    </div>
+                </div>
+
+                {/* Two columns */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+                    {/* Left — Orders */}
+                    <div>
+                        <h2 style={{
+                            fontSize: "18px",
+                            fontWeight: 600,
+                            letterSpacing: "0.02em",
+                            marginBottom: "20px",
+                        }}>
+                            Historique des commandes
+                        </h2>
+                        <OrderList />
+                    </div>
+
+                    {/* Right — Account Details */}
+                    <div>
+                        <h2 style={{
+                            fontSize: "18px",
+                            fontWeight: 600,
+                            letterSpacing: "0.02em",
+                            marginBottom: "20px",
+                        }}>
+                            Détails du compte
+                        </h2>
+                        <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
+                            {session.user?.name}
+                        </p>
+                        <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
+                            {session.user?.email}
+                        </p>
+                        <p style={{ fontSize: "14px", color: "#374151", marginBottom: "16px" }}>
+                            France
+                        </p>
+                        <button
+                            style={{
+                                background: "none",
+                                border: "none",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                textDecoration: "underline",
+                                textUnderlineOffset: "4px",
+                                color: "black",
+                                padding: 0,
+                            }}
+                        >
+                            Voir les adresses (1)
+                        </button>
                     </div>
                 </div>
             </div>
