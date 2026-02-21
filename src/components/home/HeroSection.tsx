@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
@@ -11,14 +10,15 @@ export default function HeroSection() {
             href="/collections/all"
             className="block relative w-full overflow-hidden h-[55vh] min-h-[350px] md:h-[75vh] md:min-h-[450px] group cursor-pointer"
         >
-            {/* Background image */}
-            <Image
-                src="/images/hero-new.jpg"
-                alt="RALYS Collection Urban Ghost"
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-1000"
+            {/* Background video */}
+            <video
+                src="/videos/accueil.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                 style={{ objectPosition: "center 30%" }}
-                priority
             />
 
             {/* Gradient overlays */}
