@@ -22,13 +22,13 @@ export const FloatingSelect = forwardRef<HTMLSelectElement, FloatingSelectProps>
         const isActive = isFocused || hasValue;
 
         return (
-            <div className={`relative w-full h-[50px] bg-white border border-[#d1d5db] rounded-[5px] transition-colors focus-within:border-black focus-within:ring-1 focus-within:ring-black ${className}`}>
+            <div className={`relative w-full h-[50px] min-h-[50px] bg-white border border-[#d1d5db] rounded-[5px] transition-colors focus-within:border-black focus-within:ring-1 focus-within:ring-black ${className}`}>
                 <select
                     id={selectId}
                     ref={ref}
                     value={value}
                     defaultValue={defaultValue}
-                    className="w-full h-full bg-transparent pt-[16px] pb-[2px] text-[14px] text-[#111827] outline-none appearance-none cursor-pointer disabled:bg-gray-50 disabled:text-[#6b7280] rounded-[5px]"
+                    className="w-full h-full min-h-[50px] bg-transparent pt-[16px] pb-[2px] text-[14px] text-[#111827] outline-none appearance-none cursor-pointer disabled:bg-gray-50 disabled:text-[#6b7280] rounded-[5px]"
                     style={{ paddingLeft: "14px", paddingTop: "10px", paddingRight: "40px" }}
                     onFocus={(e) => { setIsFocused(true); onFocus?.(e); }}
                     onBlur={(e) => { setIsFocused(false); onBlur?.(e); }}
