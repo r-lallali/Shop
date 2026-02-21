@@ -8,12 +8,12 @@ import { useCartStore } from "@/lib/store";
 import { FloatingInput } from "@/components/ui/FloatingInput";
 import { FloatingSelect } from "@/components/ui/FloatingSelect";
 import { AddressAutocomplete } from "@/components/ui/AddressAutocomplete";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Plus, Minus, X } from "lucide-react";
 
 export default function CheckoutPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const { items, total, clearCart } = useCartStore();
+    const { items, total, clearCart, updateQuantity, removeItem } = useCartStore();
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -29,7 +29,7 @@ export default function CheckoutPage() {
         shippingCity: "",
         shippingZipCode: "",
         shippingCountry: "France",
-        shippingPhone: "",
+        shippingPhone: "+33",
     });
 
     useEffect(() => {
@@ -68,7 +68,7 @@ export default function CheckoutPage() {
                             shippingCity: defaultAddr.city,
                             shippingZipCode: defaultAddr.zipCode,
                             shippingCountry: defaultAddr.country,
-                            shippingPhone: defaultAddr.phone,
+                            shippingPhone: defaultAddr.phone || "+33",
                         });
                     }
                 })
@@ -108,7 +108,18 @@ export default function CheckoutPage() {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const name = e.target.name;
+        const value = e.target.value;
+
+        if (name === "shippingPhone") {
+            // Prevent deleting the +33 prefix if it's the only thing left or user is backspacing into it
+            if (!value.startsWith("+33")) {
+                setForm({ ...form, shippingPhone: "+33" });
+                return;
+            }
+        }
+
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -120,7 +131,6 @@ export default function CheckoutPage() {
             return;
         }
 
-        // Phone validation: must be +33 followed by exactly 9 digits
         const phoneStr = form.shippingPhone.replace(/\s+/g, '');
         const phoneRegex = /^\+33[1-9]\d{8}$/;
         if (!phoneRegex.test(phoneStr)) {
@@ -128,41 +138,60 @@ export default function CheckoutPage() {
             return;
         }
 
+        if (!session?.user?.email) {
+            setError("Vous devez être connecté pour passer une commande");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
         try {
-            const res = await fetch("/api/orders", {
+            // Prepare order data
+            const orderData = {
+                items: items.map(item => ({
+                    productId: item.id,
+                    productName: item.name,
+                    size: item.size,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: total(),
+                shippingAddress: {
+                    firstName: form.shippingFirstName,
+                    lastName: form.shippingLastName,
+                    address: form.shippingAddress,
+                    city: form.shippingCity,
+                    zipCode: form.shippingZipCode,
+                    country: form.shippingCountry,
+                    phone: form.shippingPhone
+                }
+            };
+
+            // 1. Create Checkout Session
+            const res = await fetch("/api/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    items: items.map((item) => ({
-                        productId: item.id,
-                        size: item.size,
-                        quantity: item.quantity,
-                    })),
-                    shippingAddress: {
-                        firstName: form.shippingFirstName,
-                        lastName: form.shippingLastName,
-                        address: form.shippingAddress,
-                        city: form.shippingCity,
-                        zipCode: form.shippingZipCode,
-                        country: form.shippingCountry,
-                        phone: form.shippingPhone,
-                    },
-                }),
+                body: JSON.stringify(orderData),
             });
 
-            const data = await res.json();
-
             if (!res.ok) {
-                throw new Error(data.error || "Une erreur est survenue");
+                const data = await res.json();
+                throw new Error(data.error || "Une erreur est survenue lors de la création de la commande");
             }
 
-            clearCart();
-            router.push(`/orders/${data.orderId}`);
+            const { url } = await res.json();
+
+            // 2. Redirect to Stripe
+            if (url) {
+                window.location.href = url;
+            } else {
+                throw new Error("URL de paiement non reçue");
+            }
+
         } catch (err: any) {
-            setError(err.message);
+            console.error("Checkout error:", err);
+            setError(err.message || "Une erreur inattendue est survenue");
             setLoading(false);
         }
     };
@@ -411,16 +440,52 @@ export default function CheckoutPage() {
                                                 fill
                                                 className="object-cover"
                                             />
-                                            <span style={{ position: "absolute", top: "-6px", right: "-6px", backgroundColor: "#1a1a2e", color: "white", fontSize: "10px", width: "22px", height: "22px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 500 }}>
-                                                {item.quantity}
-                                            </span>
                                         </div>
                                         <div style={{ flex: 1, paddingTop: "4px" }}>
-                                            <h3 style={{ fontSize: "13px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>
-                                                {item.name}
-                                            </h3>
-                                            <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>Taille: {item.size}</p>
-                                            <p style={{ fontSize: "14px", fontWeight: 500 }}>{(item.price * item.quantity).toFixed(2)} €</p>
+                                            <div className="flex justify-between items-start gap-4 mb-1">
+                                                <h3 style={{ fontSize: "13px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                                                    {item.name}
+                                                </h3>
+                                                <button
+                                                    onClick={() => removeItem(item.id, item.size)}
+                                                    className="p-1 hover:opacity-50 transition-opacity -mt-1 -mr-1"
+                                                    style={{ color: "#9ca3af" }}
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            </div>
+                                            <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>
+                                                Taille: {item.size}
+                                            </p>
+
+                                            <div className="flex items-center justify-between mt-2">
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            updateQuantity(item.id, item.size, item.quantity - 1);
+                                                        }}
+                                                        className="p-0.5 hover:opacity-50 transition-opacity"
+                                                    >
+                                                        <Minus size={12} />
+                                                    </button>
+                                                    <span className="text-xs tracking-wider w-4 text-center">
+                                                        {item.quantity}
+                                                    </span>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            updateQuantity(item.id, item.size, item.quantity + 1);
+                                                        }}
+                                                        className="p-0.5 hover:opacity-50 transition-opacity"
+                                                    >
+                                                        <Plus size={12} />
+                                                    </button>
+                                                </div>
+                                                <p style={{ fontSize: "14px", fontWeight: 500 }}>
+                                                    {(item.price * item.quantity).toFixed(2)} €
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

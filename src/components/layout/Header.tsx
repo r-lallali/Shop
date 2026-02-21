@@ -18,11 +18,13 @@ const navLinks = [
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [visible, setVisible] = useState(true);
+    const [mounted, setMounted] = useState(false);
     const { openCart, itemCount } = useCartStore();
     const { data: session } = useSession();
     const count = itemCount();
 
     useEffect(() => {
+        setMounted(true);
         const handleScroll = () => {
             setVisible(window.scrollY <= 50);
         };
@@ -99,7 +101,7 @@ export default function Header() {
                             style={{ padding: 8 }}
                         >
                             <ShoppingBag size={20} strokeWidth={1.5} />
-                            {count > 0 && (
+                            {mounted && count > 0 && (
                                 <span
                                     className="absolute bg-black text-white rounded-full flex items-center justify-center font-medium"
                                     style={{
@@ -171,7 +173,7 @@ export default function Header() {
                             style={{ padding: 6 }}
                         >
                             <ShoppingBag size={20} strokeWidth={1.5} />
-                            {count > 0 && (
+                            {mounted && count > 0 && (
                                 <span
                                     className="absolute bg-black text-white rounded-full flex items-center justify-center font-medium"
                                     style={{

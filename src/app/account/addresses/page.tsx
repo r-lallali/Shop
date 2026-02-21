@@ -26,7 +26,7 @@ export default function AddressesPage() {
         city: "",
         zipCode: "",
         country: "France",
-        phone: "",
+        phone: "+33",
         isDefault: false,
     };
 
@@ -75,7 +75,7 @@ export default function AddressesPage() {
                 city: address.city,
                 zipCode: address.zipCode,
                 country: address.country,
-                phone: address.phone,
+                phone: address.phone || "+33",
                 isDefault: address.isDefault,
             });
             setEditingId(address.id);
@@ -94,11 +94,36 @@ export default function AddressesPage() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const value = e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value;
-        setForm({ ...form, [e.target.name]: value });
+        const name = e.target.name;
+
+        if (name === "phone") {
+            const strVal = value as string;
+            // Prevent deleting the +33 prefix if it's the only thing left or user is backspacing into it
+            if (!strVal.startsWith("+33")) {
+                setForm({ ...form, phone: "+33" });
+                return;
+            }
+        }
+
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validation
+        if (!form.firstName.trim() || !form.lastName.trim() || !form.address.trim() || !form.city.trim() || !form.zipCode.trim() || !form.country.trim() || !form.phone.trim()) {
+            setFormError("Veuillez remplir tous les champs obligatoires.");
+            return;
+        }
+
+        const phoneStr = form.phone.replace(/\s+/g, '');
+        const phoneRegex = /^\+33[1-9]\d{8}$/;
+        if (!phoneRegex.test(phoneStr)) {
+            setFormError("Le numéro de téléphone doit être sous la forme +33 suivi de 9 chiffres (ex: +33612345678).");
+            return;
+        }
+
         setFormLoading(true);
         setFormError("");
 

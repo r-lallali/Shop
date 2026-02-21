@@ -184,7 +184,7 @@ export default function ProductClient({
                                 borderRadius: "12px",
                                 border: "none",
                                 cursor: selectedSize ? "pointer" : "not-allowed",
-                                backgroundColor: selectedSize ? "#1a1a2e" : "#e5e7eb",
+                                backgroundColor: selectedSize ? "black" : "#e5e7eb",
                                 color: selectedSize ? "white" : "#9ca3af",
                                 transition: "all 0.3s",
                             }}
