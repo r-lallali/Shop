@@ -147,47 +147,35 @@ export default function CheckoutPage() {
         setError("");
 
         try {
-            // Prepare order data
-            const orderData = {
-                items: items.map(item => ({
-                    productId: item.id,
-                    productName: item.name,
-                    size: item.size,
-                    quantity: item.quantity,
-                    price: item.price
-                })),
-                total: total(),
-                shippingAddress: {
-                    firstName: form.shippingFirstName,
-                    lastName: form.shippingLastName,
-                    address: form.shippingAddress,
-                    city: form.shippingCity,
-                    zipCode: form.shippingZipCode,
-                    country: form.shippingCountry,
-                    phone: form.shippingPhone
-                }
-            };
-
-            // 1. Create Checkout Session
-            const res = await fetch("/api/checkout", {
+            const res = await fetch("/api/orders", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderData),
+                body: JSON.stringify({
+                    items: items.map((item) => ({
+                        productId: item.id,
+                        size: item.size,
+                        quantity: item.quantity,
+                    })),
+                    shippingAddress: {
+                        firstName: form.shippingFirstName,
+                        lastName: form.shippingLastName,
+                        address: form.shippingAddress,
+                        city: form.shippingCity,
+                        zipCode: form.shippingZipCode,
+                        country: form.shippingCountry,
+                        phone: form.shippingPhone,
+                    },
+                }),
             });
 
+            const data = await res.json();
+
             if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Une erreur est survenue lors de la création de la commande");
+                throw new Error(data.error || "Une erreur est survenue");
             }
 
-            const { url } = await res.json();
-
-            // 2. Redirect to Stripe
-            if (url) {
-                window.location.href = url;
-            } else {
-                throw new Error("URL de paiement non reçue");
-            }
+            clearCart();
+            router.push(`/orders/${data.orderId}`);
 
         } catch (err: any) {
             console.error("Checkout error:", err);
@@ -215,6 +203,21 @@ export default function CheckoutPage() {
         marginBottom: "8px",
         letterSpacing: "0.03em"
     };
+
+    const cartTotal = total();
+    const shippingCost = cartTotal >= 100 ? 0 : 4.90;
+    const finalTotal = cartTotal + shippingCost;
+
+    const isPhoneValid = /^\+33[1-9]\d{8}$/.test(form.shippingPhone.replace(/\s+/g, ''));
+    const isFormValid = (
+        form.shippingFirstName.trim() !== "" &&
+        form.shippingLastName.trim() !== "" &&
+        form.shippingAddress.trim() !== "" &&
+        form.shippingCity.trim() !== "" &&
+        form.shippingZipCode.trim() !== "" &&
+        form.shippingCountry.trim() !== "" &&
+        isPhoneValid
+    );
 
     return (
         <div className="min-h-screen bg-white text-black flex justify-center">
@@ -384,10 +387,34 @@ export default function CheckoutPage() {
                                 </div>
                             </div>
 
+                            {/* Expédition section */}
+                            <div style={{ paddingTop: "24px" }}>
+                                <h2 style={{ fontSize: "18px", fontWeight: 500, letterSpacing: "0.05em", marginBottom: "16px", textTransform: "uppercase" }}>
+                                    2. Mode d'expédition
+                                </h2>
+                                <div style={{
+                                    border: "1px solid #e5e7eb",
+                                    borderRadius: "8px",
+                                    padding: "16px 20px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    backgroundColor: "#f9fafb"
+                                }}>
+                                    <div>
+                                        <p style={{ fontSize: "15px", fontWeight: 500, color: "#000", marginBottom: "4px" }}>Standard</p>
+                                        <p style={{ fontSize: "14px", color: "#6b7280" }}>2 à 4 jours ouvrables</p>
+                                    </div>
+                                    <span style={{ fontSize: "15px", fontWeight: 600, color: "#000" }}>
+                                        {shippingCost === 0 ? "Gratuit" : "4,90 €"}
+                                    </span>
+                                </div>
+                            </div>
+
                             {/* Paiement section factice */}
-                            <div style={{ paddingTop: "12px" }}>
+                            <div style={{ paddingTop: "24px" }}>
                                 <h2 style={{ fontSize: "18px", fontWeight: 500, letterSpacing: "0.05em", marginBottom: "32px", textTransform: "uppercase" }}>
-                                    2. Paiement
+                                    3. Paiement
                                 </h2>
                                 <div style={{ backgroundColor: "#f9fafb", padding: "32px 24px", borderRadius: "10px", border: "1px solid #f3f4f6", textAlign: "center" }}>
                                     <p style={{ fontSize: "15px", color: "#374151", marginBottom: "8px", fontWeight: 500 }}>
@@ -401,7 +428,7 @@ export default function CheckoutPage() {
 
                             <button
                                 type="submit"
-                                disabled={loading}
+                                disabled={!isFormValid || loading}
                                 style={{
                                     width: "100%",
                                     padding: "18px 0",
@@ -410,9 +437,9 @@ export default function CheckoutPage() {
                                     letterSpacing: "0.03em",
                                     borderRadius: "12px",
                                     border: "none",
-                                    cursor: loading ? "not-allowed" : "pointer",
-                                    backgroundColor: "black",
-                                    color: "white",
+                                    cursor: (isFormValid && !loading) ? "pointer" : "not-allowed",
+                                    backgroundColor: isFormValid ? "black" : "#e5e7eb",
+                                    color: isFormValid ? "white" : "#9ca3af",
                                     transition: "all 0.3s",
                                     opacity: loading ? 0.7 : 1,
                                     marginTop: "24px"
@@ -494,15 +521,17 @@ export default function CheckoutPage() {
                             <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "24px" }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6b7280", marginBottom: "16px" }}>
                                     <span>Sous-total</span>
-                                    <span style={{ color: "#000" }}>{total().toFixed(2)} €</span>
+                                    <span style={{ color: "#000" }}>{cartTotal.toFixed(2)} €</span>
                                 </div>
                                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6b7280", marginBottom: "24px" }}>
                                     <span>Livraison standard (5-7 jours)</span>
-                                    <span style={{ color: "#10b981", fontWeight: 500 }}>Offerte</span>
+                                    <span style={{ color: shippingCost === 0 ? "#10b981" : "#000", fontWeight: 500 }}>
+                                        {shippingCost === 0 ? "Gratuit" : "4,90 €"}
+                                    </span>
                                 </div>
                                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "18px", fontWeight: 500, paddingTop: "24px", borderTop: "1px solid #e5e7eb" }}>
                                     <span>Total</span>
-                                    <span>{total().toFixed(2)} €</span>
+                                    <span>{finalTotal.toFixed(2)} €</span>
                                 </div>
                             </div>
                         </div>

@@ -2,9 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, User, ShoppingBag, Menu, X } from "lucide-react";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { useSession } from "next-auth/react";
+
+interface SearchProduct {
+    id: string;
+    name: string;
+    price: number;
+    image: string;
+    slug: string;
+}
 
 const navLinks = [
     { href: "/collections/all", label: "ALL" },
@@ -16,12 +26,20 @@ const navLinks = [
 ];
 
 export default function Header() {
+    const pathname = usePathname();
+    const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [visible, setVisible] = useState(true);
     const [mounted, setMounted] = useState(false);
     const { openCart, itemCount } = useCartStore();
     const { data: session } = useSession();
     const count = itemCount();
+
+    // Search states
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<SearchProduct[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
         setMounted(true);
@@ -31,6 +49,37 @@ export default function Header() {
         window.addEventListener("scroll", handleScroll, { passive: true });
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    // Search effect
+    useEffect(() => {
+        const fetchResults = async () => {
+            if (!searchQuery.trim()) {
+                setSearchResults([]);
+                return;
+            }
+            setIsSearching(true);
+            try {
+                const res = await fetch(`/api/products?q=${encodeURIComponent(searchQuery)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setSearchResults(data);
+                }
+            } catch (error) {
+                console.error("Search error:", error);
+            } finally {
+                setIsSearching(false);
+            }
+        };
+
+        const timeoutId = setTimeout(fetchResults, 300); // debounce
+        return () => clearTimeout(timeoutId);
+    }, [searchQuery]);
+
+    // Close search on route change
+    useEffect(() => {
+        setIsSearchOpen(false);
+        setSearchQuery("");
+    }, [pathname]);
 
     return (
         <header
@@ -80,6 +129,7 @@ export default function Header() {
                     {/* Icons - right */}
                     <div className="flex items-center" style={{ gap: 16 }}>
                         <button
+                            onClick={() => setIsSearchOpen(true)}
                             className="hover:opacity-50 transition-opacity flex items-center justify-center"
                             aria-label="Rechercher"
                             style={{ padding: 8 }}
@@ -152,6 +202,7 @@ export default function Header() {
                     {/* Right — 3 icons */}
                     <div className="flex items-center" style={{ gap: 8 }}>
                         <button
+                            onClick={() => setIsSearchOpen(true)}
                             className="hover:opacity-50 transition-opacity flex items-center justify-center"
                             aria-label="Rechercher"
                             style={{ padding: 6 }}
@@ -213,6 +264,87 @@ export default function Header() {
                         ))}
                     </nav>
                 </div>
+            )}
+
+            {/* Search Overlay & Backdrop */}
+            {isSearchOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black/40 z-40 transition-opacity"
+                        onClick={() => setIsSearchOpen(false)}
+                    />
+
+                    {/* Search Panel */}
+                    <div className="fixed top-0 left-0 right-0 bg-white z-50 shadow-xl" style={{ borderBottom: "1px solid #f3f4f6" }}>
+                        <div className="max-w-[800px] mx-auto">
+                            {/* Search Input Area */}
+                            <div className="flex items-center justify-between" style={{ padding: "16px 24px", height: "64px" }}>
+                                <div className="flex-1 flex items-center gap-4">
+                                    <Search size={20} className="text-gray-400" strokeWidth={1.5} />
+                                    <input
+                                        type="text"
+                                        autoFocus
+                                        placeholder="Rechercher des produits..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full bg-transparent outline-none text-[16px] placeholder-gray-400 font-light"
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => setIsSearchOpen(false)}
+                                    className="hover:opacity-50 transition-opacity p-2 text-gray-500 hover:text-black"
+                                >
+                                    <X size={24} strokeWidth={1.5} />
+                                </button>
+                            </div>
+
+                            {/* Search Results Area */}
+                            {searchQuery.trim() !== "" && (
+                                <div className="overflow-y-auto max-h-[45vh] custom-scrollbar" style={{ padding: "0 24px 24px 24px" }}>
+                                    {isSearching ? (
+                                        <div className="text-center text-gray-500 py-8 text-sm">Recherche en cours...</div>
+                                    ) : searchResults.length > 0 ? (
+                                        <div>
+                                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-6">
+                                                {searchResults.length} {searchResults.length > 1 ? "résultats" : "résultat"}
+                                            </p>
+                                            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                                {searchResults.map((product) => (
+                                                    <Link
+                                                        key={product.id}
+                                                        href={`/products/${product.slug}`}
+                                                        onClick={() => setIsSearchOpen(false)}
+                                                        className="group block"
+                                                    >
+                                                        <div className="relative aspect-[3/4] bg-[#f9f9f9] rounded-md overflow-hidden mb-3">
+                                                            <Image
+                                                                src={product.image}
+                                                                alt={product.name}
+                                                                fill
+                                                                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                                            />
+                                                        </div>
+                                                        <h3 className="text-[11px] font-medium uppercase tracking-widest mb-1 text-gray-900 group-hover:text-black transition-colors line-clamp-1">
+                                                            {product.name}
+                                                        </h3>
+                                                        <p className="text-[11px] text-gray-500">
+                                                            {product.price.toFixed(2)} €
+                                                        </p>
+                                                    </Link>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center text-gray-500 py-12 text-sm">
+                                            Aucun résultat pour "{searchQuery}"
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </>
             )}
         </header>
     );

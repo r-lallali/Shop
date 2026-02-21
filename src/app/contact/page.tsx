@@ -69,6 +69,10 @@ export default function ContactPage() {
         });
     };
 
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+    const isPhoneValid = /^\+33[1-9]\d{8}$/.test(form.phone.replace(/\s+/g, ''));
+    const isFormValid = form.name.trim() !== "" && isEmailValid && isPhoneValid && form.message.trim() !== "";
+
     return (
         <div className="min-h-screen bg-white text-black">
             <div className="flex justify-center" style={{ padding: "0 24px" }}>
@@ -192,6 +196,7 @@ export default function ContactPage() {
 
                         <button
                             type="submit"
+                            disabled={!isFormValid}
                             style={{
                                 width: "100%",
                                 padding: "18px 0",
@@ -200,9 +205,9 @@ export default function ContactPage() {
                                 letterSpacing: "0.03em",
                                 borderRadius: "12px",
                                 border: "none",
-                                cursor: "pointer",
-                                backgroundColor: "black",
-                                color: "white",
+                                cursor: isFormValid ? "pointer" : "not-allowed",
+                                backgroundColor: isFormValid ? "black" : "#e5e7eb",
+                                color: isFormValid ? "white" : "#9ca3af",
                                 transition: "all 0.3s",
                             }}
                         >

@@ -86,10 +86,13 @@ export async function POST(req: Request) {
         }
 
         // Calculate total
-        const total = items.reduce((sum: number, item: OrderItemInput) => {
+        const itemsTotal = items.reduce((sum: number, item: OrderItemInput) => {
             const product = productMap.get(item.productId)!;
             return sum + product.price * item.quantity;
         }, 0);
+
+        const shippingCost = itemsTotal >= 100 ? 0 : 4.90;
+        const total = itemsTotal + shippingCost;
 
         // Create order with items
         const order = await prisma.order.create({
