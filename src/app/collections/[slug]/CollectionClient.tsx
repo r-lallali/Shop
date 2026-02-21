@@ -33,13 +33,13 @@ export default function CollectionClient({
             </div>
 
             {/* Product grid */}
-            <div className="max-w-7xl mx-auto py-8 sm:py-12" style={{ margin: "0 auto", paddingLeft: 24, paddingRight: 24 }}>
+            <div className="max-w-7xl mx-auto py-8 sm:py-12" style={{ margin: "0 auto", paddingLeft: 24, paddingRight: 24, paddingBottom: "30px" }}>
                 {products.length === 0 ? (
                     <p className="text-center text-muted body-text py-20">
                         Aucun produit dans cette catégorie pour le moment.
                     </p>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 justify-center">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 justify-center" style={{ paddingBottom: "30px" }}>
                         {products.map((product, index) => (
                             <motion.div
                                 key={product.id}
