@@ -308,7 +308,7 @@ export default function AddressesPage() {
 
                             <form onSubmit={handleSubmit} className="space-y-5">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 relative z-50" style={{ marginBottom: "20px" }}>
-                                    <div style={{ paddingRight: "10px" }}>
+                                    <div className="max-sm:mb-5 sm:pr-[10px]">
                                         <FloatingInput
                                             required
                                             type="text"
@@ -318,7 +318,7 @@ export default function AddressesPage() {
                                             onChange={handleChange}
                                         />
                                     </div>
-                                    <div style={{ paddingLeft: "10px" }}>
+                                    <div className="sm:pl-[10px]">
                                         <FloatingInput
                                             required
                                             type="text"
@@ -350,7 +350,7 @@ export default function AddressesPage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 relative z-30" style={{ marginBottom: "20px" }}>
-                                    <div style={{ paddingRight: "10px" }}>
+                                    <div className="max-sm:mb-5 sm:pr-[10px]">
                                         <FloatingInput
                                             required
                                             type="text"
@@ -360,7 +360,7 @@ export default function AddressesPage() {
                                             onChange={handleChange}
                                         />
                                     </div>
-                                    <div style={{ paddingLeft: "10px" }}>
+                                    <div className="sm:pl-[10px]">
                                         <AddressAutocomplete
                                             required
                                             name="city"
@@ -380,7 +380,7 @@ export default function AddressesPage() {
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2" style={{ marginBottom: "20px" }}>
-                                    <div style={{ paddingRight: "10px" }}>
+                                    <div className="max-sm:mb-5 sm:pr-[10px]">
                                         <FloatingSelect
                                             name="country"
                                             label="Pays/région"
@@ -395,7 +395,7 @@ export default function AddressesPage() {
                                             ]}
                                         />
                                     </div>
-                                    <div style={{ paddingLeft: "10px" }}>
+                                    <div className="sm:pl-[10px]">
                                         <FloatingInput
                                             required
                                             type="tel"
