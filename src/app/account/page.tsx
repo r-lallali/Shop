@@ -78,12 +78,26 @@ function OrderList() {
 export default function AccountPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
+    const [addresses, setAddresses] = useState<any[]>([]);
+    const [loadingAddresses, setLoadingAddresses] = useState(true);
 
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
         }
     }, [status, router]);
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            fetch("/api/user/addresses")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.addresses) setAddresses(data.addresses);
+                })
+                .catch(err => console.error(err))
+                .finally(() => setLoadingAddresses(false));
+        }
+    }, [status]);
 
     if (status === "loading") {
         return (
@@ -158,15 +172,21 @@ export default function AccountPage() {
                         }}>
                             Détails du compte
                         </h2>
-                        <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
-                            {session.user?.name}
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
-                            {session.user?.email}
-                        </p>
-                        <p style={{ fontSize: "14px", color: "#374151", marginBottom: "16px" }}>
-                            France
-                        </p>
+                        {loadingAddresses ? (
+                            <p style={{ fontSize: "14px", color: "#6b7280" }}>Chargement des informations...</p>
+                        ) : (
+                            <>
+                                <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
+                                    {session.user?.name}
+                                </p>
+                                <p style={{ fontSize: "14px", color: "#374151", marginBottom: "4px" }}>
+                                    {session.user?.email}
+                                </p>
+                                <p style={{ fontSize: "14px", color: "#374151", marginBottom: "16px" }}>
+                                    {addresses.find(a => a.isDefault)?.country || addresses[0]?.country || "France"}
+                                </p>
+                            </>
+                        )}
                         <Link
                             href="/account/addresses"
                             style={{
@@ -178,7 +198,7 @@ export default function AccountPage() {
                                 marginTop: "8px",
                             }}
                         >
-                            Voir les adresses (1)
+                            {loadingAddresses ? "Voir les adresses" : `Voir les adresses (${addresses.length})`}
                         </Link>
                     </div>
                 </div>

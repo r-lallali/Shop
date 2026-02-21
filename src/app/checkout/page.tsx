@@ -14,6 +14,8 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const [addresses, setAddresses] = useState<any[]>([]);
+
     // Form state
     const [form, setForm] = useState({
         shippingFirstName: "",
@@ -37,11 +39,37 @@ export default function CheckoutPage() {
             const parts = session.user.name.split(" ");
             setForm((prev) => ({
                 ...prev,
-                shippingFirstName: parts[0] || "",
-                shippingLastName: parts.slice(1).join(" ") || "",
+                shippingFirstName: prev.shippingFirstName || parts[0] || "",
+                shippingLastName: prev.shippingLastName || parts.slice(1).join(" ") || "",
             }));
         }
     }, [session]);
+
+    // Fetch user addresses
+    useEffect(() => {
+        if (status === "authenticated") {
+            fetch("/api/user/addresses")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.addresses && data.addresses.length > 0) {
+                        setAddresses(data.addresses);
+
+                        // Auto-fill default address
+                        const defaultAddr = data.addresses.find((a: any) => a.isDefault) || data.addresses[0];
+                        setForm({
+                            shippingFirstName: defaultAddr.firstName,
+                            shippingLastName: defaultAddr.lastName,
+                            shippingAddress: defaultAddr.address,
+                            shippingCity: defaultAddr.city,
+                            shippingZipCode: defaultAddr.zipCode,
+                            shippingCountry: defaultAddr.country,
+                            shippingPhone: defaultAddr.phone,
+                        });
+                    }
+                })
+                .catch(err => console.error("Could not fetch addresses:", err));
+        }
+    }, [status]);
 
     if (status === "loading" || !session) {
         return (
@@ -155,6 +183,41 @@ export default function CheckoutPage() {
                                 <h2 style={{ fontSize: "18px", fontWeight: 500, letterSpacing: "0.05em", marginBottom: "32px", textTransform: "uppercase" }}>
                                     1. Adresse de livraison
                                 </h2>
+
+                                {addresses.length > 0 && (
+                                    <div className="mb-8">
+                                        <label style={labelStyle}>Sélectionner une adresse enregistrée</label>
+                                        <div className="relative">
+                                            <select
+                                                style={{ ...inputStyle, appearance: "none", cursor: "pointer", color: "#000", backgroundColor: "#fafafa" }}
+                                                onChange={(e) => {
+                                                    const selectedId = e.target.value;
+                                                    if (selectedId) {
+                                                        const addr = addresses.find(a => a.id === selectedId);
+                                                        if (addr) {
+                                                            setForm({
+                                                                shippingFirstName: addr.firstName,
+                                                                shippingLastName: addr.lastName,
+                                                                shippingAddress: addr.address,
+                                                                shippingCity: addr.city,
+                                                                shippingZipCode: addr.zipCode,
+                                                                shippingCountry: addr.country,
+                                                                shippingPhone: addr.phone,
+                                                            });
+                                                        }
+                                                    }
+                                                }}
+                                            >
+                                                <option value="">-- Utiliser une autre adresse --</option>
+                                                {addresses.map((addr) => (
+                                                    <option key={addr.id} value={addr.id}>
+                                                        {addr.firstName} {addr.lastName} - {addr.address}, {addr.city} {addr.isDefault && "(Principale)"}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {error && (
                                     <div style={{ backgroundColor: "#fef2f2", color: "#dc2626", padding: "16px", borderRadius: "8px", marginBottom: "24px", fontSize: "14px" }}>
