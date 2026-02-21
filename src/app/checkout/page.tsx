@@ -54,10 +54,19 @@ export default function CheckoutPage() {
     if (items.length === 0) {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-                <p className="text-lg mb-6">Votre panier est vide.</p>
+                <p style={{ fontSize: "16px", marginBottom: "32px", color: "#6b7280" }}>Votre panier est vide.</p>
                 <button
                     onClick={() => router.push("/collections/all")}
-                    className="px-8 py-4 bg-black text-white text-sm tracking-wider hover:opacity-80 transition-opacity"
+                    style={{
+                        padding: "16px 32px",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        letterSpacing: "0.05em",
+                        borderRadius: "8px",
+                        backgroundColor: "#1a1a2e",
+                        color: "white",
+                        transition: "opacity 0.3s",
+                    }}
                 >
                     CONTINUER MES ACHATS
                 </button>
@@ -110,100 +119,118 @@ export default function CheckoutPage() {
         }
     };
 
+    const inputStyle = {
+        width: "100%",
+        border: "1px solid #e5e7eb",
+        borderRadius: "10px",
+        padding: "16px",
+        fontSize: "14px",
+        outline: "none",
+        backgroundColor: "transparent",
+        transition: "border-color 0.2s"
+    };
+
+    const labelStyle = {
+        display: "block",
+        fontSize: "12px",
+        fontWeight: 500,
+        color: "#6b7280",
+        marginBottom: "8px",
+        letterSpacing: "0.03em"
+    };
+
     return (
-        <div className="min-h-screen bg-white text-black py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-light tracking-widest uppercase mb-12 border-b border-gray-200 pb-6">
+        <div className="min-h-screen bg-white text-black">
+            <div className="w-full max-w-[1200px] mx-auto" style={{ padding: "0 24px", paddingTop: "60px", paddingBottom: "100px" }}>
+                <h1 style={{ fontSize: "32px", fontWeight: 300, letterSpacing: "0.03em", marginBottom: "48px", textTransform: "uppercase" }}>
                     Finaliser la commande
                 </h1>
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="flex flex-col lg:flex-row gap-16">
                     {/* Left side: Form */}
-                    <div className="lg:col-span-7">
-                        <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="flex-1 w-full lg:w-3/5">
+                        <form onSubmit={handleSubmit} className="space-y-12">
                             {/* Livraison section */}
                             <div>
-                                <h2 className="text-lg font-medium tracking-wide mb-6">
+                                <h2 style={{ fontSize: "18px", fontWeight: 500, letterSpacing: "0.05em", marginBottom: "32px", textTransform: "uppercase" }}>
                                     1. Adresse de livraison
                                 </h2>
 
                                 {error && (
-                                    <div className="bg-red-50 text-red-600 p-4 rounded-md mb-6 text-sm">
+                                    <div style={{ backgroundColor: "#fef2f2", color: "#dc2626", padding: "16px", borderRadius: "8px", marginBottom: "24px", fontSize: "14px" }}>
                                         {error}
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                                     <div>
-                                        <label className="block text-xs text-gray-500 mb-1">Prénom</label>
                                         <input
                                             required
                                             type="text"
                                             name="shippingFirstName"
+                                            placeholder="Prénom"
                                             value={form.shippingFirstName}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors"
+                                            style={inputStyle}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs text-gray-500 mb-1">Nom</label>
                                         <input
                                             required
                                             type="text"
                                             name="shippingLastName"
+                                            placeholder="Nom"
                                             value={form.shippingLastName}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors"
+                                            style={inputStyle}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="mt-4">
-                                    <label className="block text-xs text-gray-500 mb-1">Adresse complète</label>
+                                <div className="mb-5">
                                     <input
                                         required
                                         type="text"
                                         name="shippingAddress"
+                                        placeholder="Adresse (Numéro et nom de rue, bâtiment, appartement...)"
                                         value={form.shippingAddress}
                                         onChange={handleChange}
-                                        placeholder="Numéro et nom de rue, bâtiment, appartement..."
-                                        className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors"
+                                        style={inputStyle}
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 mt-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
                                     <div>
-                                        <label className="block text-xs text-gray-500 mb-1">Code postal</label>
                                         <input
                                             required
                                             type="text"
                                             name="shippingZipCode"
+                                            placeholder="Code postal"
                                             value={form.shippingZipCode}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors"
+                                            style={inputStyle}
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs text-gray-500 mb-1">Ville</label>
                                         <input
                                             required
                                             type="text"
                                             name="shippingCity"
+                                            placeholder="Ville"
                                             value={form.shippingCity}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors"
+                                            style={inputStyle}
                                         />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-4 mt-4">
-                                    <div>
-                                        <label className="block text-xs text-gray-500 mb-1">Pays</label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+                                    <div className="relative">
                                         <select
                                             name="shippingCountry"
                                             value={form.shippingCountry}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors bg-white"
+                                            style={{ ...inputStyle, appearance: "none", cursor: "pointer", color: "#000" }}
                                         >
                                             <option value="France">France</option>
                                             <option value="Belgique">Belgique</option>
@@ -213,28 +240,30 @@ export default function CheckoutPage() {
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="block text-xs text-gray-500 mb-1">Téléphone</label>
                                         <input
                                             required
                                             type="tel"
                                             name="shippingPhone"
+                                            placeholder="Téléphone"
                                             value={form.shippingPhone}
                                             onChange={handleChange}
-                                            className="w-full border border-gray-300 rounded-md p-3 text-sm focus:border-black focus:ring-0 outline-none transition-colors"
+                                            style={inputStyle}
                                         />
                                     </div>
                                 </div>
                             </div>
 
                             {/* Paiement section factice */}
-                            <div className="pt-8 border-t border-gray-200">
-                                <h2 className="text-lg font-medium tracking-wide mb-6">
+                            <div style={{ paddingTop: "12px" }}>
+                                <h2 style={{ fontSize: "18px", fontWeight: 500, letterSpacing: "0.05em", marginBottom: "32px", textTransform: "uppercase" }}>
                                     2. Paiement
                                 </h2>
-                                <div className="bg-gray-50 p-6 rounded-md border border-gray-200 text-center">
-                                    <p className="text-sm text-gray-600 mb-2">Aucun paiement n'est requis.</p>
-                                    <p className="text-xs text-gray-500">
-                                        Il s'agit d'une commande de démonstration. Vous recevrez un email de confirmation.
+                                <div style={{ backgroundColor: "#f9fafb", padding: "32px 24px", borderRadius: "10px", border: "1px solid #f3f4f6", textAlign: "center" }}>
+                                    <p style={{ fontSize: "15px", color: "#374151", marginBottom: "8px", fontWeight: 500 }}>
+                                        Aucun paiement n'est requis.
+                                    </p>
+                                    <p style={{ fontSize: "13px", color: "#6b7280" }}>
+                                        Il s'agit d'une commande de démonstration. Vous recevrez un email de confirmation récapitulatif avec l'expédition.
                                     </p>
                                 </div>
                             </div>
@@ -242,55 +271,69 @@ export default function CheckoutPage() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full bg-black text-white py-4 mt-8 text-sm tracking-widest font-medium hover:opacity-80 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{
+                                    width: "100%",
+                                    padding: "18px 0",
+                                    fontSize: "15px",
+                                    fontWeight: 500,
+                                    letterSpacing: "0.03em",
+                                    borderRadius: "12px",
+                                    border: "none",
+                                    cursor: loading ? "not-allowed" : "pointer",
+                                    backgroundColor: "#1a1a2e",
+                                    color: "white",
+                                    transition: "all 0.3s",
+                                    opacity: loading ? 0.7 : 1,
+                                    marginTop: "24px"
+                                }}
                             >
-                                {loading ? "TRAITEMENT..." : "CONFIRMER LA COMMANDE"}
+                                {loading ? "TRAITEMENT EN COURS..." : "CONFIRMER LA COMMANDE"}
                             </button>
                         </form>
                     </div>
 
                     {/* Right side: Recaps */}
-                    <div className="lg:col-span-5">
-                        <div className="bg-gray-50 p-6 sm:p-8 rounded-lg border border-gray-100 sticky top-24">
-                            <h2 className="text-lg font-medium tracking-wide mb-6 border-b border-gray-200 pb-4">
-                                Résumé de la commande
+                    <div className="w-full lg:w-2/5 mt-12 lg:mt-0">
+                        <div style={{ backgroundColor: "#fafafa", padding: "32px", borderRadius: "12px", border: "1px solid #f3f4f6", position: "sticky", top: "40px" }}>
+                            <h2 style={{ fontSize: "18px", fontWeight: 500, letterSpacing: "0.05em", marginBottom: "32px", textTransform: "uppercase", paddingBottom: "24px", borderBottom: "1px solid #e5e7eb" }}>
+                                Résumé
                             </h2>
 
-                            <div className="space-y-6 mb-6 max-h-[400px] overflow-y-auto pr-2 no-scrollbar">
+                            <div style={{ maxHeight: "400px", overflowY: "auto", paddingRight: "8px", marginBottom: "32px" }} className="scrollbar-none">
                                 {items.map((item) => (
-                                    <div key={item.id + item.size} className="flex gap-4">
-                                        <div className="relative w-20 h-24 bg-white border border-gray-100 flex-shrink-0">
+                                    <div key={item.id + item.size} style={{ display: "flex", gap: "20px", marginBottom: "24px" }}>
+                                        <div style={{ position: "relative", width: "80px", height: "100px", backgroundColor: "#fff", border: "1px solid #f3f4f6", flexShrink: 0, borderRadius: "6px", overflow: "hidden" }}>
                                             <Image
                                                 src={item.image}
                                                 alt={item.name}
                                                 fill
                                                 className="object-cover"
                                             />
-                                            <span className="absolute -top-2 -right-2 bg-black text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-medium">
+                                            <span style={{ position: "absolute", top: "-6px", right: "-6px", backgroundColor: "#1a1a2e", color: "white", fontSize: "10px", width: "22px", height: "22px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 500 }}>
                                                 {item.quantity}
                                             </span>
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-xs font-semibold tracking-wider uppercase mb-1">
+                                        <div style={{ flex: 1, paddingTop: "4px" }}>
+                                            <h3 style={{ fontSize: "13px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>
                                                 {item.name}
                                             </h3>
-                                            <p className="text-xs text-gray-500 mb-2">Taille: {item.size}</p>
-                                            <p className="text-sm">{(item.price * item.quantity).toFixed(2)} €</p>
+                                            <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "8px" }}>Taille: {item.size}</p>
+                                            <p style={{ fontSize: "14px", fontWeight: 500 }}>{(item.price * item.quantity).toFixed(2)} €</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="border-t border-gray-200 pt-6 space-y-4">
-                                <div className="flex justify-between text-sm text-gray-600">
+                            <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "24px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6b7280", marginBottom: "16px" }}>
                                     <span>Sous-total</span>
-                                    <span>{total().toFixed(2)} €</span>
+                                    <span style={{ color: "#000" }}>{total().toFixed(2)} €</span>
                                 </div>
-                                <div className="flex justify-between text-sm text-gray-600">
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px", color: "#6b7280", marginBottom: "24px" }}>
                                     <span>Livraison standard (5-7 jours)</span>
-                                    <span className="text-green-600 font-medium">Offerte</span>
+                                    <span style={{ color: "#10b981", fontWeight: 500 }}>Offerte</span>
                                 </div>
-                                <div className="flex justify-between text-lg font-semibold pt-4 border-t border-gray-200">
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "18px", fontWeight: 500, paddingTop: "24px", borderTop: "1px solid #e5e7eb" }}>
                                     <span>Total</span>
                                     <span>{total().toFixed(2)} €</span>
                                 </div>

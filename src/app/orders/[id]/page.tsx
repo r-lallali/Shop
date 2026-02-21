@@ -43,7 +43,7 @@ export default function OrderTrackingPage() {
     if (loading || status === "loading") {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
-                <p className="text-sm text-gray-400 tracking-wider">CHARGEMENT...</p>
+                <p style={{ fontSize: "14px", color: "#6b7280", letterSpacing: "0.05em", textTransform: "uppercase" }}>Chargement...</p>
             </div>
         );
     }
@@ -51,10 +51,20 @@ export default function OrderTrackingPage() {
     if (error || !order) {
         return (
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
-                <p className="text-red-600 mb-6">{error || "Commande introuvable"}</p>
+                <p style={{ color: "#dc2626", marginBottom: "24px", fontSize: "15px" }}>{error || "Commande introuvable"}</p>
                 <button
                     onClick={() => router.push("/account")}
-                    className="px-8 py-3 border border-black text-sm tracking-wider hover:bg-black hover:text-white transition-colors"
+                    style={{
+                        padding: "16px 32px",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        letterSpacing: "0.05em",
+                        borderRadius: "8px",
+                        border: "1px solid #1a1a2e",
+                        backgroundColor: "transparent",
+                        color: "#1a1a2e",
+                        transition: "all 0.3s",
+                    }}
                 >
                     RETOUR AU COMPTE
                 </button>
@@ -73,13 +83,15 @@ export default function OrderTrackingPage() {
     const currentStepIndex = steps.findIndex(s => s.id === orderStatus) || 1; // Default to confirmed if not found
 
     return (
-        <div className="min-h-screen bg-white text-black py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-12 border-b border-gray-200 pb-6">
-                    <h1 className="text-2xl sm:text-3xl font-light tracking-widest uppercase">
+        <div className="min-h-screen bg-white text-black">
+            <div className="w-full max-w-[1000px] mx-auto" style={{ padding: "0 24px", paddingTop: "60px", paddingBottom: "100px" }}>
+
+                {/* Header Section */}
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between" style={{ borderBottom: "1px solid #e5e7eb", paddingBottom: "24px", marginBottom: "48px" }}>
+                    <h1 style={{ fontSize: "28px", fontWeight: 300, letterSpacing: "0.03em", textTransform: "uppercase", marginBottom: "8px" }}>
                         Commande #{order.id.slice(-8).toUpperCase()}
                     </h1>
-                    <p className="text-sm text-gray-500 mt-2 sm:mt-0">
+                    <p style={{ fontSize: "14px", color: "#6b7280" }}>
                         Passée le {new Date(order.createdAt).toLocaleDateString('fr-FR', {
                             day: 'numeric', month: 'long', year: 'numeric'
                         })}
@@ -87,13 +99,17 @@ export default function OrderTrackingPage() {
                 </div>
 
                 {/* Timeline */}
-                <div className="mb-16">
+                <div style={{ marginBottom: "80px", padding: "0 16px" }}>
                     <div className="relative">
-                        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-100">
+                        <div style={{ height: "4px", backgroundColor: "#f3f4f6", borderRadius: "2px", marginBottom: "24px", overflow: "hidden" }}>
                             <div
-                                style={{ width: `${(currentStepIndex / (steps.length - 1)) * 100}%` }}
-                                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-black transition-all duration-500"
-                            ></div>
+                                style={{
+                                    width: `${(currentStepIndex / (steps.length - 1)) * 100}%`,
+                                    height: "100%",
+                                    backgroundColor: "#1a1a2e",
+                                    transition: "width 0.5s ease-in-out"
+                                }}
+                            />
                         </div>
                         <div className="flex justify-between w-full">
                             {steps.map((step, index) => {
@@ -102,15 +118,21 @@ export default function OrderTrackingPage() {
                                 const isCurrent = index === currentStepIndex;
 
                                 return (
-                                    <div key={step.id} className="flex flex-col items-center w-1/4">
-                                        <div className={`flex items-center justify-center w-8 h-8 rounded-full mb-2 border-2 transition-colors ${isCurrent ? 'bg-black text-white border-black' :
-                                                isCompleted ? 'bg-white text-black border-black' :
-                                                    'bg-white text-gray-300 border-gray-200'
-                                            }`}>
-                                            <Icon size={14} strokeWidth={isCurrent ? 2 : 1.5} />
+                                    <div key={step.id} className="flex flex-col items-center" style={{ width: "25%" }}>
+                                        <div style={{
+                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                            width: "40px", height: "40px", borderRadius: "50%", marginBottom: "12px",
+                                            border: `2px solid ${isCurrent ? '#1a1a2e' : isCompleted ? '#1a1a2e' : '#e5e7eb'}`,
+                                            backgroundColor: isCurrent ? '#1a1a2e' : '#fff',
+                                            color: isCurrent ? '#fff' : isCompleted ? '#1a1a2e' : '#d1d5db',
+                                            transition: "all 0.3s"
+                                        }}>
+                                            <Icon size={18} strokeWidth={isCurrent ? 2 : 1.5} />
                                         </div>
-                                        <span className={`text-[10px] sm:text-xs tracking-wider uppercase font-medium text-center ${isCompleted ? 'text-black' : 'text-gray-400'
-                                            }`}>
+                                        <span style={{
+                                            fontSize: "11px", letterSpacing: "0.05em", textTransform: "uppercase", fontWeight: 500, textAlign: "center",
+                                            color: isCompleted ? '#000' : '#9ca3af'
+                                        }}>
                                             {step.label}
                                         </span>
                                     </div>
@@ -120,16 +142,18 @@ export default function OrderTrackingPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                {/* Details Section */}
+                <div className="flex flex-col md:flex-row gap-12 lg:gap-16">
                     {/* Articles */}
-                    <div>
-                        <h2 className="text-sm tracking-[0.15em] uppercase font-semibold mb-6">
+                    <div className="flex-1 w-full" style={{ border: "1px solid #e5e7eb", borderRadius: "12px", padding: "32px", backgroundColor: "#fafafa" }}>
+                        <h2 style={{ fontSize: "16px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "32px", paddingBottom: "16px", borderBottom: "1px solid #e5e7eb" }}>
                             Articles commandés
                         </h2>
-                        <div className="space-y-6">
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginBottom: "32px" }}>
                             {order.items.map((item: any) => (
-                                <div key={item.id} className="flex gap-4">
-                                    <div className="relative w-20 h-24 bg-gray-50 flex-shrink-0">
+                                <div key={item.id} style={{ display: "flex", gap: "20px", width: "100%", marginBottom: "24px" }}>
+                                    <div style={{ position: "relative", width: "80px", height: "100px", backgroundColor: "#fff", border: "1px solid #f3f4f6", flexShrink: 0, borderRadius: "6px", overflow: "hidden" }}>
                                         <Image
                                             src={item.product.images[0]}
                                             alt={item.product.name}
@@ -137,21 +161,22 @@ export default function OrderTrackingPage() {
                                             className="object-cover"
                                         />
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xs tracking-wider uppercase font-medium mb-1">
+                                    <div style={{ flex: 1, paddingTop: "4px" }}>
+                                        <h3 style={{ fontSize: "13px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "6px" }}>
                                             {item.product.name}
                                         </h3>
-                                        <p className="text-xs text-gray-500 mb-2">Taille : {item.size}</p>
-                                        <div className="flex justify-between items-center">
-                                            <p className="text-xs text-gray-500">Qté : {item.quantity}</p>
-                                            <p className="text-sm font-medium">{item.price.toFixed(2)} €</p>
+                                        <p style={{ fontSize: "12px", color: "#6b7280", marginBottom: "12px" }}>Taille : {item.size}</p>
+                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                            <p style={{ fontSize: "13px", color: "#6b7280" }}>Qté : {item.quantity}</p>
+                                            <p style={{ fontSize: "14px", fontWeight: 500 }}>{item.price.toFixed(2)} €</p>
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-8 pt-6 border-t border-gray-100">
-                            <div className="flex justify-between items-center text-lg font-medium">
+
+                        <div style={{ paddingTop: "24px", borderTop: "1px solid #e5e7eb" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "18px", fontWeight: 500 }}>
                                 <span>Total</span>
                                 <span>{order.total.toFixed(2)} €</span>
                             </div>
@@ -159,39 +184,49 @@ export default function OrderTrackingPage() {
                     </div>
 
                     {/* Livraison */}
-                    <div className="bg-gray-50 p-8 rounded-sm">
-                        <h2 className="text-sm tracking-[0.15em] uppercase font-semibold mb-6">
+                    <div className="w-full md:w-[360px]" style={{ padding: "32px", borderRadius: "12px" }}>
+                        <h2 style={{ fontSize: "16px", fontWeight: 500, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "32px" }}>
                             Informations de livraison
                         </h2>
 
-                        <div className="space-y-6">
-                            <div>
-                                <h3 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Adresse</h3>
-                                <p className="text-sm leading-relaxed">
-                                    {order.shippingFirstName} {order.shippingLastName}<br />
-                                    {order.shippingAddress}<br />
-                                    {order.shippingZipCode} {order.shippingCity}<br />
-                                    {order.shippingCountry}
-                                </p>
-                                <p className="text-sm mt-2 text-gray-600">
-                                    {order.shippingPhone}
-                                </p>
-                            </div>
+                        <div style={{ marginBottom: "32px" }}>
+                            <h3 style={{ fontSize: "11px", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "12px" }}>Adresse</h3>
+                            <p style={{ fontSize: "14px", lineHeight: 1.6, color: "#111827", margin: 0 }}>
+                                {order.shippingFirstName} {order.shippingLastName}<br />
+                                {order.shippingAddress}<br />
+                                {order.shippingZipCode} {order.shippingCity}<br />
+                                {order.shippingCountry}
+                            </p>
+                            <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "8px", margin: 0 }}>
+                                {order.shippingPhone}
+                            </p>
+                        </div>
 
-                            <div className="pt-6 border-t border-gray-200">
-                                <h3 className="text-xs text-gray-500 uppercase tracking-wider mb-2">Expédition</h3>
-                                <p className="text-sm text-green-600 font-medium">
-                                    LIVRAISON STANDARD — 5 à 7 jours ouvrés
-                                </p>
-                            </div>
+                        <div style={{ paddingTop: "32px", borderTop: "1px solid #f3f4f6" }}>
+                            <h3 style={{ fontSize: "11px", color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "12px" }}>Expédition</h3>
+                            <p style={{ fontSize: "14px", color: "#10b981", fontWeight: 500, margin: 0 }}>
+                                LIVRAISON STANDARD — 5 à 7 jours ouvrés
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="mt-16 text-center">
+                <div style={{ marginTop: "80px", textAlign: "center" }}>
                     <button
                         onClick={() => router.push("/account")}
-                        className="text-sm tracking-wider underline underline-offset-4 text-gray-500 hover:text-black transition-colors"
+                        style={{
+                            fontSize: "14px",
+                            letterSpacing: "0.05em",
+                            textDecoration: "underline",
+                            textUnderlineOffset: "4px",
+                            color: "#6b7280",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            transition: "color 0.3s"
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.color = "#000"}
+                        onMouseOut={(e) => e.currentTarget.style.color = "#6b7280"}
                     >
                         RETOURNER À MON COMPTE
                     </button>
