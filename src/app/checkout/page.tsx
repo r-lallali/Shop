@@ -237,7 +237,7 @@ export default function CheckoutPage() {
                                 </h2>
 
                                 {addresses.length > 0 && (
-                                    <div className="mb-8 relative z-50">
+                                    <div className="mb-8 relative z-40">
                                         <button
                                             type="button"
                                             onClick={() => setIsAddressDropdownOpen(!isAddressDropdownOpen)}
@@ -248,7 +248,7 @@ export default function CheckoutPage() {
                                         </button>
 
                                         {isAddressDropdownOpen && (
-                                            <div className="absolute top-full left-0 w-full lg:w-[400px] mt-3 bg-white border border-gray-300 rounded-[8px] shadow-lg overflow-hidden flex flex-col z-50">
+                                            <div className="absolute top-full left-0 w-full lg:w-[400px] mt-3 bg-white border border-gray-300 rounded-[8px] shadow-lg overflow-hidden flex flex-col z-40">
                                                 <ul className="max-h-60 overflow-y-auto">
                                                     {addresses.map((addr) => (
                                                         <li

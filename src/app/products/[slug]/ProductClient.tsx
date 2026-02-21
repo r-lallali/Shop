@@ -207,7 +207,7 @@ export default function ProductClient({
                                         className="text-gray-400 group-open:rotate-180 transition-transform duration-300"
                                     />
                                 </summary>
-                                <div className="text-sm text-gray-500 pb-6 leading-relaxed space-y-1.5">
+                                <div className="text-sm text-gray-500 pb-6 leading-relaxed space-y-1.5" style={{ paddingBottom: "24px" }}>
                                     <p>Lavage en machine à 30°C, à l&apos;envers.</p>
                                     <p>Ne pas utiliser de sèche-linge.</p>
                                     <p>Repassage à basse température si nécessaire.</p>
@@ -227,7 +227,7 @@ export default function ProductClient({
                                         className="text-gray-400 group-open:rotate-180 transition-transform duration-300"
                                     />
                                 </summary>
-                                <div className="text-sm text-gray-500 pb-6 leading-relaxed space-y-1.5">
+                                <div className="text-sm text-gray-500 pb-6 leading-relaxed space-y-1.5" style={{ paddingBottom: "24px" }}>
                                     <p>Livraison gratuite dès 100€ d&apos;achat.</p>
                                     <p>Expédition sous 2-3 jours ouvrés.</p>
                                     <p>Retours gratuits sous 14 jours.</p>
@@ -247,7 +247,7 @@ export default function ProductClient({
                                         className="text-gray-400 group-open:rotate-180 transition-transform duration-300"
                                     />
                                 </summary>
-                                <div className="text-sm text-gray-500 pb-6 leading-relaxed space-y-1.5">
+                                <div className="text-sm text-gray-500 pb-6 leading-relaxed space-y-1.5" style={{ paddingBottom: "24px" }}>
                                     <p>S — Tour de poitrine: 96cm</p>
                                     <p>M — Tour de poitrine: 102cm</p>
                                     <p>L — Tour de poitrine: 108cm</p>
