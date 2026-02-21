@@ -382,7 +382,7 @@ export default function CheckoutPage() {
                                     borderRadius: "12px",
                                     border: "none",
                                     cursor: loading ? "not-allowed" : "pointer",
-                                    backgroundColor: "#1a1a2e",
+                                    backgroundColor: "black",
                                     color: "white",
                                     transition: "all 0.3s",
                                     opacity: loading ? 0.7 : 1,
