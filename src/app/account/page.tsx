@@ -96,8 +96,8 @@ export default function AccountPage() {
     if (!session) return null;
 
     return (
-        <div className="min-h-screen bg-white text-black">
-            <div className="max-w-[1200px] mx-auto px-6 sm:px-12 py-16 sm:py-20">
+        <div className="min-h-screen bg-white text-black flex justify-center">
+            <div className="w-full" style={{ maxWidth: "1000px", padding: "0 24px", paddingTop: "60px", paddingBottom: "100px" }}>
 
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                     <div>
@@ -167,20 +167,19 @@ export default function AccountPage() {
                         <p style={{ fontSize: "14px", color: "#374151", marginBottom: "16px" }}>
                             France
                         </p>
-                        <button
+                        <Link
+                            href="/account/addresses"
                             style={{
-                                background: "none",
-                                border: "none",
-                                cursor: "pointer",
+                                display: "inline-block",
                                 fontSize: "14px",
                                 textDecoration: "underline",
                                 textUnderlineOffset: "4px",
                                 color: "black",
-                                padding: 0,
+                                marginTop: "8px",
                             }}
                         >
                             Voir les adresses (1)
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>
